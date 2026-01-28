@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import {getRandom, getRandomItemArray} from '../utils/utils';
+import {getRandom, getRandomItemArray} from '@utils/common';
 import {OFFERS_TITLE, PRICE, TYPES} from './consts';
 
 export function generateOffer() {

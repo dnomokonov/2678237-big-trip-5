@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import {getRandom} from '../utils/utils';
+import {getRandom} from '@utils/common';
 import {PRICE} from './consts';
 import dayjs from 'dayjs';
 
