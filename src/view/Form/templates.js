@@ -1,6 +1,5 @@
-import { createElement } from '../render';
-import { formatForInput } from '../utils/dateUtils';
-import {byChecked} from '../utils/utils';
+import {formatForInput} from '@utils/dateUtils';
+import {byChecked} from '@utils/common';
 
 function createDestinationTemplate(destinations) {
   return destinations
@@ -45,10 +44,57 @@ function createPictureTemplate(pictures = []) {
     .join('');
 }
 
-function createFormEditingTemplate(data) {
+function createOffersSection(preparedOffers) {
+  if (preparedOffers.length === 0) {
+    return '';
+  }
+
+  return `
+    <section class="event__section event__section--offers">
+      <h3 class="event__section-title event__section-title--offers">Offers</h3>
+      <div class="event__available-offers">
+        ${createOfferTemplate(preparedOffers)}
+      </div>
+    </section>
+  `;
+}
+
+function createTypeItemsTemplate(allOffers, type) {
+  return allOffers.map(({ type: t }) => {
+    const label = t.charAt(0).toUpperCase() + t.slice(1).replace('-', ' ');
+    return `
+        <div class="event__type-item">
+          <input
+            id="event-type-${t}-1"
+            class="event__type-input visually-hidden"
+            type="radio"
+            name="event-type"
+            value="${t}"
+            ${t === type ? 'checked' : ''}
+          >
+          <label class="event__type-label event__type-label--${t}" for="event-type-${t}-1">
+            ${label}
+          </label>
+        </div>
+      `;
+  }).join('');
+}
+
+function createButtonsTemplate(id) {
+  return id ?
+    `<button class="event__reset-btn" type="reset">Delete</button>
+      <button class="event__rollup-btn" type="button">
+      <span class="visually-hidden">Open event</span>
+    </button>`
+    :
+    '<button class="event__reset-btn" type="reset">Cancel</button>';
+}
+
+export function createFormTemplate(data) {
   const { point = {}, destinations = [], offers: allOffers = [] } = data;
 
   const {
+    id = null,
     basePrice = 0,
     dateFrom = null,
     dateTo = null,
@@ -64,43 +110,12 @@ function createFormEditingTemplate(data) {
   };
 
   const offersForType = allOffers.find((o) => o.type === type)?.offers || [];
-
   const preparedOffers = offersForType.map((offer) => ({
     ...offer,
     checked: selectedOfferIds.includes(offer.id)
   }));
 
   preparedOffers.sort(byChecked);
-
-  const typeItems = allOffers
-    .map(({ type: t }) => {
-      const label = t.charAt(0).toUpperCase() + t.slice(1).replace('-', ' ');
-      return `
-        <div class="event__type-item">
-          <input
-            id="event-type-${t}-1"
-            class="event__type-input visually-hidden"
-            type="radio"
-            name="event-type"
-            value="${t}"
-            ${t === type ? 'checked' : ''}
-          >
-          <label class="event__type-label event__type-label--${t}" for="event-type-${t}-1">
-            ${label}
-          </label>
-        </div>
-      `;
-    })
-    .join('');
-
-  const offersSection = preparedOffers.length > 0 ? `
-    <section class="event__section event__section--offers">
-      <h3 class="event__section-title event__section-title--offers">Offers</h3>
-      <div class="event__available-offers">
-        ${createOfferTemplate(preparedOffers)}
-      </div>
-    </section>
-  ` : '';
 
   return `
     <form class="event event--edit" action="#" method="post">
@@ -115,7 +130,7 @@ function createFormEditingTemplate(data) {
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
-              ${typeItems}
+              ${createTypeItemsTemplate(allOffers, type)}
             </fieldset>
           </div>
         </div>
@@ -131,6 +146,7 @@ function createFormEditingTemplate(data) {
             name="event-destination"
             value="${currentDestination.name || ''}"
             list="destination-list-1"
+            placeholder="Select destination"
             required
           >
           <datalist id="destination-list-1">
@@ -177,19 +193,16 @@ function createFormEditingTemplate(data) {
         </div>
 
         <button class="event__save-btn btn btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
-        <button class="event__rollup-btn" type="button">
-          <span class="visually-hidden">Open event</span>
-        </button>
+        ${createButtonsTemplate(id)}
       </header>
 
       <section class="event__details">
-        ${offersSection}
+        ${createOffersSection(preparedOffers)}
 
         <section class="event__section event__section--destination">
           <h3 class="event__section-title event__section-title--destination">Destination</h3>
           <p class="event__destination-description">
-            ${currentDestination.description || '—'}
+            ${currentDestination.description || 'No description available'}
           </p>
 
           <div class="event__photos-container">
@@ -201,28 +214,4 @@ function createFormEditingTemplate(data) {
       </section>
     </form>
   `;
-}
-
-export default class FormEditingView {
-  #element = null;
-  #data = null;
-
-  constructor(data) {
-    this.#data = data;
-  }
-
-  getTemplate() {
-    return createFormEditingTemplate(this.#data);
-  }
-
-  getElement() {
-    if (!this.#element) {
-      this.#element = createElement(this.getTemplate());
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
 }

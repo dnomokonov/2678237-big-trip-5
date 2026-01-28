@@ -1,8 +1,8 @@
-import Presenter from './presenter/presenter';
-import MockService from './service/mockService';
-import DestinationsModel from './model/destinationsModel';
-import OffersModel from './model/offersModel';
-import PointsModel from './model/pointsModel';
+import Presenter from '@presenter/presenter';
+import MockService from '@service/mockService';
+import DestinationsModel from '@model/destinationsModel';
+import OffersModel from '@model/offersModel';
+import PointsModel from '@model/pointsModel';
 
 const service = new MockService();
 const destinationsModel = new DestinationsModel(service);
