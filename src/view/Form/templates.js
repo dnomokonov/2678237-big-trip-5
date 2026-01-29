@@ -90,6 +90,34 @@ function createButtonsTemplate(id) {
     '<button class="event__reset-btn" type="reset">Cancel</button>';
 }
 
+function createDescriptionTemplate(currentDestination, id) {
+  const description = (currentDestination.description || '').trim();
+  const pictures = currentDestination.pictures || [];
+
+  if (!description && pictures.length === 0) {
+    return '';
+  }
+
+  return `
+    <section class="event__section event__section--destination">
+      <h3 class="event__section-title event__section-title--destination">Destination</h3>
+      ${description ? `
+        <p class="event__destination-description">
+          ${description}
+        </p>
+      ` : ''}
+
+      ${pictures.length > 0 && !id ? `
+        <div class="event__photos-container">
+          <div class="event__photos-tape">
+            ${createPictureTemplate(pictures)}
+          </div>
+        </div>
+      ` : ''}
+    </section>
+  `;
+}
+
 export function createFormTemplate(data) {
   const { point = {}, destinations = [], offers: allOffers = [] } = data;
 
@@ -199,18 +227,7 @@ export function createFormTemplate(data) {
       <section class="event__details">
         ${createOffersSection(preparedOffers)}
 
-        <section class="event__section event__section--destination">
-          <h3 class="event__section-title event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">
-            ${currentDestination.description || 'No description available'}
-          </p>
-
-          <div class="event__photos-container">
-            <div class="event__photos-tape">
-              ${createPictureTemplate(currentDestination.pictures)}
-            </div>
-          </div>
-        </section>
+        ${createDescriptionTemplate(currentDestination, id)}
       </section>
     </form>
   `;
