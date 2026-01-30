@@ -57,7 +57,7 @@ export default class Presenter {
       },
       onSubmitForm: () => {
         replaceFormToPoint();
-        document.addEventListener('keydown', escKeyDownHandler);
+        document.removeEventListener('keydown', escKeyDownHandler);
       }
     });
     const pointComponent = new Point({

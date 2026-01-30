@@ -28,13 +28,15 @@ export function createEventTemplate(data) {
     checked: point.offers.includes(offer.id)
   }));
 
+  const currentDestination = destinations.find((d) => d.id === point.destination);
+
   return `
     <div class="event">
       <time class="event__date" datetime="${formatMachineDate(point.dateFrom)}">${formatVisibleShortDate(point.dateFrom)}</time>
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${point.type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${point.type} ${destinations.name}</h3>
+      <h3 class="event__title">${point.type} ${currentDestination.name}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${formatMachineDateTime(point.dateFrom)}">${formatVisibleTime(point.dateFrom)}</time>

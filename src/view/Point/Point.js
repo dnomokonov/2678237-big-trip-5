@@ -1,5 +1,5 @@
 import AbstractView from '@framework/view/abstract-view';
-import {createEventTemplate} from '@view/Point/templates';
+import {createEventTemplate} from './templates';
 
 export default class Point extends AbstractView {
   #data = null;
