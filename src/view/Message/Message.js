@@ -1,5 +1,5 @@
 import AbstractView from '@framework/view/abstract-view';
-import {createMessageTemplate} from '@view/Message/templates';
+import {createMessageTemplate} from './templates';
 
 export default class Message extends AbstractView {
   #message = null;

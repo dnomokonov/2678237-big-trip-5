@@ -1,5 +1,5 @@
 import AbstractView from '@framework/view/abstract-view';
-import {createSortingTemplate} from '@view/Filter/templates';
+import {createFiltersTemplate} from './templates';
 
 export default class Filters extends AbstractView {
   #filters = null;
@@ -10,6 +10,6 @@ export default class Filters extends AbstractView {
   }
 
   get template() {
-    return createSortingTemplate(this.#filters);
+    return createFiltersTemplate(this.#filters);
   }
 }

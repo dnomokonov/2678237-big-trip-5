@@ -17,7 +17,7 @@ function createTripFilterTemplate(filters) {
   `).join('');
 }
 
-export function createSortingTemplate(filters) {
+export function createFiltersTemplate(filters) {
   return `
     <form class="trip-filters" action="#" method="get">
       ${createTripFilterTemplate(filters)}

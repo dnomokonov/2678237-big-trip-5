@@ -64,6 +64,10 @@ export default class Presenter {
       onEditClick: () => {
         replaceFormToPoint();
         document.addEventListener('keydown', escKeyDownHandler);
+      },
+      onSubmitForm: () => {
+        replaceFormToPoint();
+        document.removeEventListener('keydown', escKeyDownHandler);
       }
     });
     const pointComponent = new Point({
