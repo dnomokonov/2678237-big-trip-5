@@ -1,5 +1,5 @@
 import AbstractView from '@framework/view/abstract-view';
-import {createEventsListTemplate} from '@view/List/templates';
+import {createEventsListTemplate} from './templates';
 
 export default class List extends AbstractView {
   get template() {
