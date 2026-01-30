@@ -25,4 +25,9 @@ function generateFilters(points) {
   }));
 }
 
-export { isFuturePoint, isPresentPoint, isPastPoint, generateFilters };
+export {
+  isFuturePoint,
+  isPresentPoint,
+  isPastPoint,
+  generateFilters
+};

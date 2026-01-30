@@ -8,8 +8,10 @@ import Sort from '@view/Sort/Sort';
 import Point from '@view/Point/Point';
 import Form from '@view/Form/Form';
 import Message from '@view/Message/Message';
+
 import {MessagesBoard} from '@/const';
 import {generateFilters} from '@utils/filterUtils';
+import {generateSorts} from '@utils/sortUtils';
 
 export default class Presenter {
   #eventList = new List();
@@ -32,9 +34,10 @@ export default class Presenter {
     this.offers = [...this.#offersModel.get()];
 
     const filters = generateFilters(this.points);
+    const sorts = generateSorts();
 
     render(new Filters(filters), this.#filtersContainer);
-    render(new Sort(), this.#tripEvents);
+    render(new Sort(sorts), this.#tripEvents);
     render(this.#eventList, this.#tripEvents);
 
     if (this.points.length === 0) {
