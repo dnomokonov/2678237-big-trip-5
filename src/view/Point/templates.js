@@ -1,23 +1,25 @@
-import {createElement} from '../render';
 import {
   formatDuration,
   formatMachineDate,
   formatMachineDateTime,
   formatVisibleShortDate,
   formatVisibleTime
-} from '../utils/dateUtils';
+} from '@utils/dateUtils';
 
-function createOfferTemplate(offers) {
-  return offers.map((offer) => `<li class="event__offer">
-      <span class="event__offer-title">${offer.title}</span>
-      &plus;&euro;&nbsp;
-      <span class="event__offer-price">${offer.price}</span>
-    </li>`
-  ).join('');
+export function createOfferTemplate(offers) {
+  return offers.map((offer) => {
+    if (offer.checked) {
+      return `<li class="event__offer">
+                <span class="event__offer-title">${offer.title}</span>
+                    &plus;&euro;&nbsp;
+                <span class="event__offer-price">${offer.price}</span>
+             </li>`;
+    }
+  }).join('');
 }
 
-function createEventTemplate(data) {
-  const {point, destination, offers} = data;
+export function createEventTemplate(data) {
+  const {point, destinations, offers} = data;
   const isActive = (point.isFavorite) ? 'event__favorite-btn--active' : '';
 
   const offersForType = offers.find((o) => o.type === point.type)?.offers || [];
@@ -26,13 +28,15 @@ function createEventTemplate(data) {
     checked: point.offers.includes(offer.id)
   }));
 
+  const currentDestination = destinations.find((d) => d.id === point.destination);
+
   return `
     <div class="event">
       <time class="event__date" datetime="${formatMachineDate(point.dateFrom)}">${formatVisibleShortDate(point.dateFrom)}</time>
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${point.type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${point.type} ${destination.name}</h3>
+      <h3 class="event__title">${point.type} ${currentDestination.name}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${formatMachineDateTime(point.dateFrom)}">${formatVisibleTime(point.dateFrom)}</time>
@@ -59,28 +63,4 @@ function createEventTemplate(data) {
       </button>
     </div>
   `;
-}
-
-export default class PointView {
-  #element = null;
-  #data = {};
-
-  constructor(data) {
-    this.#data = data;
-  }
-
-  getTemplate() {
-    return createEventTemplate(this.#data);
-  }
-
-  getElement() {
-    if (!this.#element) {
-      this.#element = createElement(this.getTemplate());
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
 }

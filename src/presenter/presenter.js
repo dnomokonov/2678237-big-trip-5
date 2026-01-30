@@ -1,64 +1,84 @@
-import ListView from '../view/listView';
-import {render} from '../render';
-import ItemListView from '../view/itemListView';
-import FormEditingView from '../view/formEditingView';
-import FiltersView from '../view/filtersView';
-import SortingView from '../view/sortingView';
-import FormCreationView from '../view/formCreationView';
-import PointView from '../view/pointView';
-import {appendElement} from '../utils/utils';
+import {render, replace} from '@framework/render';
+import {appendElement} from '@utils/common';
+
+import List from '@view/List/List';
+import ItemList from '@view/itemList/ItemList';
+import Filters from '@view/Filter/Filters';
+import Sort from '@view/Sort/Sort';
+import Point from '@view/Point/Point';
+import Form from '@view/Form/Form';
 
 export default class Presenter {
-  eventList = new ListView();
-  tripEvents = document.querySelector('.trip-events');
-  filters = document.querySelector('.trip-controls__filters');
+  #eventList = new List();
+  #tripEvents = document.querySelector('.trip-events');
+  #filtersContainer = document.querySelector('.trip-controls__filters');
+
+  #pointsModel = null;
+  #destinationsModel = null;
+  #offersModel = null;
 
   constructor({pointsModel, destinationsModel, offersModel}) {
-    this.pointsModel = pointsModel;
-    this.destinationsModel = destinationsModel;
-    this.offersModel = offersModel;
+    this.#pointsModel = pointsModel;
+    this.#destinationsModel = destinationsModel;
+    this.#offersModel = offersModel;
   }
 
   init() {
-    this.points = [...this.pointsModel.get()];
-    this.destinations = [...this.destinationsModel.get()];
-    this.offers = [...this.offersModel.get()];
+    this.points = [...this.#pointsModel.get()];
+    this.destinations = [...this.#destinationsModel.get()];
+    this.offers = [...this.#offersModel.get()];
 
-    render(new FiltersView(), this.filters);
-    render(new SortingView(), this.tripEvents);
-    render(this.eventList, this.tripEvents);
+    render(new Filters(), this.#filtersContainer);
+    render(new Sort(), this.#tripEvents);
+    render(this.#eventList, this.#tripEvents);
 
-    const firstPoint = this.points[0];
-    const editItemList = new ItemListView();
-
-    appendElement(editItemList, new FormEditingView({
-      point: firstPoint,
-      destinations: this.destinations,
-      offers: this.offers,
-    }));
-
-    render(editItemList, this.eventList.getElement());
-
-    for (let i = 1; i < this.points.length - 1; i++) {
-      const itemList = new ItemListView();
-      const currentPoint = this.points[i];
-      appendElement(itemList, new PointView({
-        point: currentPoint,
-        destination: this.destinationsModel.findDestination(currentPoint.destination),
+    for (let i = 0; i < this.points.length; i++) {
+      this.#renderPoint({
+        point: this.points[i],
+        destinations: this.destinations,
         offers: this.offers,
-      }));
-      render(itemList, this.eventList.getElement());
+      });
+    }
+  }
+
+  #renderPoint(data) {
+    const escKeyDownHandler = (evt) => {
+      if (evt.key === 'Escape') {
+        evt.preventDefault();
+        replaceFormToPoint();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
+    };
+    const pointEditForm = new Form({
+      data,
+      onEditClick: () => {
+        replaceFormToPoint();
+        document.addEventListener('keydown', escKeyDownHandler);
+      },
+      onSubmitForm: () => {
+        replaceFormToPoint();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
+    });
+    const pointComponent = new Point({
+      data,
+      onEditClick: () => {
+        replacePointToForm();
+        document.addEventListener('keydown', escKeyDownHandler);
+      }
+    });
+
+    function replacePointToForm() {
+      replace(pointEditForm, pointComponent);
     }
 
-    const lastPoint = this.points[this.points.length - 1];
-    const addItemList = new ItemListView();
+    function replaceFormToPoint() {
+      replace(pointComponent, pointEditForm);
+    }
 
-    appendElement(addItemList, new FormCreationView({
-      point: lastPoint,
-      destinations: this.destinations,
-      offers: this.offers,
-    }));
-
-    render(addItemList, this.eventList.getElement());
+    const itemList = new ItemList();
+    appendElement(itemList, pointComponent);
+    render(itemList, this.#eventList.element);
   }
+
 }

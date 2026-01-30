@@ -1,6 +1,4 @@
-import {createElement} from '../render';
-
-function createFiltersTemplate() {
+export function createSortingTemplate() {
   return `
     <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
       <div class="trip-sort__item  trip-sort__item--day">
@@ -29,24 +27,4 @@ function createFiltersTemplate() {
       </div>
     </form>
   `;
-}
-
-export default class SortingView {
-  #element = null;
-
-  getTemplate() {
-    return createFiltersTemplate();
-  }
-
-  getElement() {
-    if(!this.#element) {
-      this.#element = createElement(this.getTemplate());
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
 }

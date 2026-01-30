@@ -1,8 +1,8 @@
-import {getRandom, getRandomItemArray} from '../utils/utils';
-import {CITIES, COUNT_OFFERS, COUNT_POINTS, OFFERS_TITLE, TYPES} from '../mock/consts';
-import {generateDestination} from '../mock/destination';
-import {generateOffer} from '../mock/offer';
-import {generatePoint} from '../mock/point';
+import {getRandom, getRandomItemArray} from '@utils/common';
+import {CITIES, COUNT_OFFERS, COUNT_POINTS, OFFERS_TITLE, TYPES} from '@mock/consts';
+import {generateDestination} from '@mock/destination';
+import {generateOffer} from '@mock/offer';
+import {generatePoint} from '@mock/point';
 
 export default class MockService {
   #points = [];
@@ -46,7 +46,7 @@ export default class MockService {
         const available = offersByType.offers;
         const howMany = getRandom(1, COUNT_OFFERS);
 
-        offerIds = Array.from({ length: Math.min(howMany, available.length) }, () =>
+        offerIds = Array.from({ length: howMany }, () =>
           getRandomItemArray(available).id
         );
       }

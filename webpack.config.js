@@ -10,6 +10,18 @@ module.exports = {
     clean: true,
   },
   devtool: "source-map",
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src"),
+      "@view": path.resolve(__dirname, "src/view"),
+      "@model": path.resolve(__dirname, "src/model"),
+      "@presenter": path.resolve(__dirname, "src/presenter"),
+      "@framework": path.resolve(__dirname, "src/framework"),
+      "@service": path.resolve(__dirname, "src/service"),
+      "@utils": path.resolve(__dirname, "src/utils"),
+      "@mock": path.resolve(__dirname, "src/mock"),
+    },
+  },
   plugins: [
     new HtmlPlugin({
       template: 'public/index.html',
@@ -36,6 +48,10 @@ module.exports = {
             presets: ['@babel/preset-env']
           },
         },
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader']
       },
     ]
   }

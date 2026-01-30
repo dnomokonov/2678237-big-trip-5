@@ -6,8 +6,8 @@ function getRandomItemArray(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-function appendElement(container, element) {
-  container.getElement().appendChild(element.getElement());
+function appendElement(container, component) {
+  container.element.appendChild(component.element);
 }
 
 function byChecked(a, b) {
