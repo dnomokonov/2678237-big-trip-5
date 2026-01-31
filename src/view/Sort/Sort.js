@@ -2,14 +2,14 @@ import AbstractView from '@framework/view/abstract-view';
 import {createSortingTemplate} from './templates';
 
 export default class Sort extends AbstractView {
-  #sortItems = null;
+  #sorts = null;
 
-  constructor(sortItems) {
+  constructor(sorts) {
     super();
-    this.#sortItems = sortItems;
+    this.#sorts = sorts;
   }
 
   get template() {
-    return createSortingTemplate(this.#sortItems);
+    return createSortingTemplate(this.#sorts);
   }
 }

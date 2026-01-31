@@ -1,30 +1,30 @@
 import dayjs from 'dayjs';
-import {sort} from '@/const';
+import {sortByType} from '@/const';
 
-function isSortByDay(a, b) {
+function toSortedByDay(a, b) {
   return dayjs(a.dateFrom).diff(dayjs(b.dateFrom));
 }
 
-function isSortByTime(a, b) {
+function toSortedByTime(a, b) {
   const durationA = dayjs(a.dateTo).diff(dayjs(a.dateFrom));
   const durationB = dayjs(b.dateTo).diff(dayjs(b.dateFrom));
   return durationB - durationA;
 }
 
-function isSortByPrice(a, b) {
+function toSortedByPrice(a, b) {
   return b.basePrice - a.basePrice;
 }
 
 function generateSorts() {
-  return Object.entries(sort).map(([type, method]) => ({
+  return Object.entries(sortByType).map(([type, method]) => ({
     type,
     isDisabled: !method,
   }));
 }
 
 export {
-  isSortByDay,
-  isSortByTime,
-  isSortByPrice,
+  toSortedByDay,
+  toSortedByTime,
+  toSortedByPrice,
   generateSorts
 };

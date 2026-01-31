@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
-import {filter} from '@/const';
+import {filterByType} from '@/const';
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
@@ -19,7 +19,7 @@ function isPastPoint(point) {
 }
 
 function generateFilters(points) {
-  return Object.entries(filter).map(([filterType, filterFn]) => ({
+  return Object.entries(filterByType).map(([filterType, filterFn]) => ({
     type: filterType,
     count: filterFn(points).length,
   }));

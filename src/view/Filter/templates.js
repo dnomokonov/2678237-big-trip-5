@@ -1,4 +1,4 @@
-import {FilterPoint} from '@/const';
+import {FilterType} from '@/const';
 
 function createTripFilterTemplate(filters) {
   return filters.map((filter) => `
@@ -9,7 +9,7 @@ function createTripFilterTemplate(filters) {
             type="radio"
             name="trip-filter"
             value="${filter.type}"
-            ${filter.type === FilterPoint.EVERTHING ? 'checked' : ''}
+            ${filter.type === FilterType.EVERYTHING ? 'checked' : ''}
             ${filter.count === 0 ? 'disabled' : ''}
         >
         <label class="trip-filters__filter-label" for="filter-${filter.type}">${filter.type}</label>

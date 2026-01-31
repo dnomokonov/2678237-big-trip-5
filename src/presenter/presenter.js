@@ -41,7 +41,7 @@ export default class Presenter {
     render(this.#eventList, this.#tripEvents);
 
     if (this.points.length === 0) {
-      render(new Message({message: MessagesBoard.EVERTHING}), this.#tripEvents);
+      render(new Message({message: MessagesBoard.EVERYTHING}), this.#tripEvents);
       return;
     }
 
