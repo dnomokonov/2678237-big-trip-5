@@ -1,17 +1,17 @@
 import dayjs from 'dayjs';
 import {sortByType} from '@/const';
 
-function toSortedByDay(a, b) {
+function isSortByDay(a, b) {
   return dayjs(a.dateFrom).diff(dayjs(b.dateFrom));
 }
 
-function toSortedByTime(a, b) {
+function isSortByTime(a, b) {
   const durationA = dayjs(a.dateTo).diff(dayjs(a.dateFrom));
   const durationB = dayjs(b.dateTo).diff(dayjs(b.dateFrom));
   return durationB - durationA;
 }
 
-function toSortedByPrice(a, b) {
+function isSortByPrice(a, b) {
   return b.basePrice - a.basePrice;
 }
 
@@ -23,8 +23,8 @@ function generateSorts() {
 }
 
 export {
-  toSortedByDay,
-  toSortedByTime,
-  toSortedByPrice,
+  isSortByDay,
+  isSortByTime,
+  isSortByPrice,
   generateSorts
 };

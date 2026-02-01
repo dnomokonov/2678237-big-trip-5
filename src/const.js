@@ -1,8 +1,8 @@
 import {isFuturePoint, isPastPoint, isPresentPoint} from '@utils/filterUtils';
 import {
-  toSortedByDay,
-  toSortedByPrice,
-  toSortedByTime
+  isSortByDay,
+  isSortByTime,
+  isSortByPrice
 } from '@utils/sortUtils';
 
 const MessagesBoard = {
@@ -36,10 +36,10 @@ const SortType = {
 };
 
 const sortByType = {
-  [SortType.DAY]: (points) => points.sort(toSortedByDay),
+  [SortType.DAY]: (points) => points.toSorted(isSortByDay),
   [SortType.EVENT]: null,
-  [SortType.TIME]: (points) => points.sort(toSortedByTime),
-  [SortType.PRICE]: (points) => points.sort(toSortedByPrice),
+  [SortType.TIME]: (points) => points.toSorted(isSortByTime),
+  [SortType.PRICE]: (points) => points.toSorted(isSortByPrice),
   [SortType.OFFERS]: null,
 };
 
