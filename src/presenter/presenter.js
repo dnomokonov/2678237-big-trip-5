@@ -7,6 +7,11 @@ import Filters from '@view/Filter/Filters';
 import Sort from '@view/Sort/Sort';
 import Point from '@view/Point/Point';
 import Form from '@view/Form/Form';
+import Message from '@view/Message/Message';
+
+import {MessagesBoard} from '@/const';
+import {generateFilters} from '@utils/filterUtils';
+import {generateSorts} from '@utils/sortUtils';
 
 export default class Presenter {
   #eventList = new List();
@@ -28,9 +33,17 @@ export default class Presenter {
     this.destinations = [...this.#destinationsModel.get()];
     this.offers = [...this.#offersModel.get()];
 
-    render(new Filters(), this.#filtersContainer);
-    render(new Sort(), this.#tripEvents);
+    const filters = generateFilters(this.points);
+    const sorts = generateSorts();
+
+    render(new Filters(filters), this.#filtersContainer);
+    render(new Sort(sorts), this.#tripEvents);
     render(this.#eventList, this.#tripEvents);
+
+    if (this.points.length === 0) {
+      render(new Message({message: MessagesBoard.EVERYTHING}), this.#tripEvents);
+      return;
+    }
 
     for (let i = 0; i < this.points.length; i++) {
       this.#renderPoint({
