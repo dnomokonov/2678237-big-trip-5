@@ -6,10 +6,10 @@ export default class Form extends AbstractView {
   #handleCloseEdit = null;
   #handleSubmitForm = null;
 
-  constructor({data, onEditClick, onSubmitForm}) {
+  constructor({data, onCloseClick, onSubmitForm}) {
     super();
     this.#data = data;
-    this.#handleCloseEdit = onEditClick;
+    this.#handleCloseEdit = onCloseClick;
     this.#handleSubmitForm = onSubmitForm;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeHandleClick);
     this.element.addEventListener('submit', this.#submitHandleClick);
