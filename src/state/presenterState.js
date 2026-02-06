@@ -8,9 +8,7 @@ export default class PresenterState {
     this.#currentPresenter = presenter;
   }
 
-  closePresenter(presenter) {
-    if (this.#currentPresenter !== presenter) {
-      this.#currentPresenter = null;
-    }
+  closePresenter() {
+    this.#currentPresenter = null;
   }
 }

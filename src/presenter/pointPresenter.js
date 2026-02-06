@@ -2,7 +2,7 @@ import Form from '@view/Form/Form';
 import Point from '@view/Point/Point';
 import ItemList from '@view/itemList/ItemList';
 
-import {render, replace} from '@framework/render';
+import {remove, render, replace} from '@framework/render';
 import {appendElement} from '@utils/common';
 
 const Mode = {
@@ -13,7 +13,7 @@ const Mode = {
 export default class PointPresenter {
   #pointListContainer = null;
   #stateManager = null;
-  #onDataChange = null;
+  #handleDataChange = null;
 
   #pointComponent = null;
   #pointEditComponent = null;
@@ -26,7 +26,7 @@ export default class PointPresenter {
   constructor({pointListContainer, stateManager, onDataChange}) {
     this.#pointListContainer = pointListContainer;
     this.#stateManager = stateManager;
-    this.#onDataChange = onDataChange;
+    this.#handleDataChange = onDataChange;
   }
 
   init({point, destinations, offers}) {
@@ -34,16 +34,9 @@ export default class PointPresenter {
     this.#destinations = destinations;
     this.#offers = offers;
 
-    this.#renderPoint();
-  }
+    const prevPointComponent = this.#pointComponent;
+    const prevPointEditComponent = this.#pointEditComponent;
 
-  resetToView() {
-    if (this.#mode !== Mode.DEFAULT) {
-      this.#replaceFormToPoint();
-    }
-  }
-
-  #renderPoint() {
     this.#pointComponent = new Point({
       data: {
         point: this.#point,
@@ -60,29 +53,34 @@ export default class PointPresenter {
         destinations: this.#destinations,
         offers: this.#offers,
       },
-      onCloseClick: this.#handleCloseFrom ,
+      onCloseClick: this.#handleCloseForm ,
       onSubmitForm: this.#handleSubmitForm,
     });
 
     const itemList = new ItemList();
     appendElement(itemList, this.#pointComponent);
 
-    render(itemList, this.#pointListContainer);
+    if (prevPointComponent === null || prevPointEditComponent === null) {
+      render(itemList, this.#pointListContainer);
+      return;
+    }
+
+    if (this.#mode === Mode.DEFAULT) {
+      replace(this.#pointComponent, prevPointComponent);
+    }
+
+    if (this.#mode === Mode.EDITING) {
+      replace(this.#pointEditComponent, prevPointEditComponent);
+    }
+
+    remove(prevPointComponent);
+    remove(prevPointEditComponent);
   }
 
-  #updatePoint() {
-    const updatedPoint = new Point({
-      data: {
-        point: this.#point,
-        destinations: this.#destinations,
-        offers: this.#offers,
-      },
-      onEditClick: this.#handleEditClick,
-      onFavoriteToggle: this.#handleToggleFavorite,
-    });
-
-    replace(updatedPoint, this.#pointComponent);
-    this.#pointComponent = updatedPoint;
+  resetToView() {
+    if (this.#mode !== Mode.DEFAULT) {
+      this.#replaceFormToPoint();
+    }
   }
 
   #replacePointToForm = () => {
@@ -109,19 +107,16 @@ export default class PointPresenter {
     this.#stateManager.openPresenter(this);
   };
 
-  #handleCloseFrom = () => {
+  #handleCloseForm = () => {
     this.#replaceFormToPoint();
-    this.#stateManager.closePresenter(this);
+    this.#stateManager.closePresenter();
   };
 
   #handleSubmitForm = () => {
-    this.#handleCloseFrom();
+    this.#handleCloseForm();
   };
 
   #handleToggleFavorite = () => {
-    const updatedPoint = {...this.#point, isFavorite: !this.#point.isFavorite};
-    this.#onDataChange(updatedPoint);
-    this.#point = updatedPoint;
-    this.#updatePoint();
+    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
   };
 }

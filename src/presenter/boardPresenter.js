@@ -24,6 +24,7 @@ export default class BoardPresenter {
   #destinations = null;
   #offers = null;
 
+  #pointPresenters = new Map();
   #pointManagerState = new PresenterState();
 
   constructor({pointsModel, destinationsModel, offersModel}) {
@@ -33,7 +34,7 @@ export default class BoardPresenter {
   }
 
   init() {
-    this.#points = [...this.#pointsModel.get()];
+    this.#points = [...this.#pointsModel.points];
     this.#destinations = [...this.#destinationsModel.get()];
     this.#offers = [...this.#offersModel.get()];
 
@@ -44,17 +45,18 @@ export default class BoardPresenter {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#pointListComponent.element,
       stateManager: this.#pointManagerState,
-      onDataChange: this.#handleDataChange,
+      onDataChange: this.#handlePointChange,
     });
     pointPresenter.init({
       point,
       destinations: this.#destinations,
       offers: this.#offers,
     });
+    this.#pointPresenters.set(point.id, pointPresenter);
   }
 
   #renderPoints() {
-    this.#points.map((point) => {
+    this.#points.forEach((point) => {
       this.#renderPoint(point);
     });
   }
@@ -72,18 +74,23 @@ export default class BoardPresenter {
   #renderBoard() {
     this.#renderFilters();
     this.#renderSorting();
-    render(this.#pointListComponent, this.#tripEvents);
 
     if (this.#points.length === 0) {
       render(new Message({message: MessagesBoard.EVERYTHING}), this.#tripEvents);
       return;
     }
 
+    render(this.#pointListComponent, this.#tripEvents);
     this.#renderPoints();
   }
 
-  #handleDataChange = (data) => {
-    this.#pointsModel.update(data);
-    this.#points = [...this.#pointsModel.get()];
+  #handlePointChange = (updatedPoint) => {
+    this.#pointsModel.updatePoint(updatedPoint);
+    this.#points = [...this.#pointsModel.points];
+    this.#pointPresenters.get(updatedPoint.id).init({
+      point: updatedPoint,
+      destinations: this.#destinations,
+      offers: this.#offers,
+    });
   };
 }

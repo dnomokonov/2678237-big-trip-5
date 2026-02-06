@@ -7,11 +7,11 @@ export default class PointsModel {
     this.#points = service.getPoints();
   }
 
-  get() {
+  get points() {
     return this.#points;
   }
 
-  update(updatedPoint) {
+  updatePoint(updatedPoint) {
     const index = this.#points.findIndex((point) => point.id === updatedPoint.id);
 
     if(index === -1) {
