@@ -8,6 +8,7 @@ function createSortItemsTemplate(sorts) {
         class="trip-sort__input  visually-hidden"
         type="radio" name="trip-sort"
         value="sort-${item.type}"
+        data-sort-type="${item.type}"
         ${item.type === SortType.DAY ? 'checked' : ''}
         ${item.isDisabled ? 'disabled' : ''}
       >

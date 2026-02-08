@@ -17,6 +17,7 @@ export default class PointPresenter {
 
   #pointComponent = null;
   #pointEditComponent = null;
+  #itemListComponent = new ItemList();
 
   #point = null;
   #destinations = null;
@@ -57,11 +58,10 @@ export default class PointPresenter {
       onSubmitForm: this.#handleSubmitForm,
     });
 
-    const itemList = new ItemList();
-    appendElement(itemList, this.#pointComponent);
+    appendElement(this.#itemListComponent, this.#pointComponent);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
-      render(itemList, this.#pointListContainer);
+      render(this.#itemListComponent, this.#pointListContainer);
       return;
     }
 
@@ -81,6 +81,12 @@ export default class PointPresenter {
     if (this.#mode !== Mode.DEFAULT) {
       this.#replaceFormToPoint();
     }
+  }
+
+  destroy() {
+    remove(this.#pointComponent);
+    remove(this.#pointEditComponent);
+    remove(this.#itemListComponent);
   }
 
   #replacePointToForm = () => {
