@@ -1,7 +1,7 @@
 import {generateFilters} from '@utils/filterUtils';
 import {generateSorts} from '@utils/sortUtils';
 import {render} from '@framework/render';
-import {MessagesBoard} from '@/const';
+import {MessagesBoard, sortByType, SortType} from '@/const';
 
 import List from '@view/List/List';
 import Filters from '@view/Filter/Filters';
@@ -20,12 +20,15 @@ export default class BoardPresenter {
   #destinationsModel = null;
   #offersModel = null;
 
-  #points = null;
-  #destinations = null;
-  #offers = null;
+  #points = [];
+  #sourcedPoints = [];
+  #destinations = [];
+  #offers = [];
 
   #pointPresenters = new Map();
   #pointManagerState = new PresenterState();
+
+  #currentSortType = SortType.DAY;
 
   constructor({pointsModel, destinationsModel, offersModel}) {
     this.#pointsModel = pointsModel;
@@ -35,6 +38,8 @@ export default class BoardPresenter {
 
   init() {
     this.#points = [...this.#pointsModel.points];
+    this.#sourcedPoints = [...this.#pointsModel.points];
+
     this.#destinations = [...this.#destinationsModel.get()];
     this.#offers = [...this.#offersModel.get()];
 
@@ -61,27 +66,51 @@ export default class BoardPresenter {
     });
   }
 
+  #renderPointList() {
+    render(this.#pointListComponent, this.#tripEvents);
+    this.#renderPoints();
+  }
+
+  #clearPointList() {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
+  }
+
   #renderFilters() {
     const filters = generateFilters(this.#points);
     render(new Filters(filters), this.#filtersContainer);
   }
 
-  #renderSorting() {
+  #renderSort() {
     const sorts = generateSorts();
-    render(new Sort(sorts), this.#tripEvents);
+    render(new Sort({
+      sorts,
+      onChangeSortType: this.#handleSortTypeChange
+    }), this.#tripEvents);
   }
+
+  #handleSortTypeChange = (typeSort) => {
+    if (this.#currentSortType === typeSort) {
+      return;
+    }
+
+    this.#points = sortByType[typeSort](this.#sourcedPoints);
+    this.#currentSortType = typeSort;
+
+    this.#clearPointList();
+    this.#renderPointList();
+  };
 
   #renderBoard() {
     this.#renderFilters();
-    this.#renderSorting();
 
     if (this.#points.length === 0) {
       render(new Message({message: MessagesBoard.EVERYTHING}), this.#tripEvents);
       return;
     }
 
-    render(this.#pointListComponent, this.#tripEvents);
-    this.#renderPoints();
+    this.#renderSort();
+    this.#renderPointList();
   }
 
   #handlePointChange = (updatedPoint) => {
