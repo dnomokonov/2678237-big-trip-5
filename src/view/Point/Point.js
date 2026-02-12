@@ -6,9 +6,9 @@ export default class Point extends AbstractView {
   #handleEditClick = null;
   #handleToggleFavorite = null;
 
-  constructor({data, onEditClick, onFavoriteToggle}) {
+  constructor({point, destinations, offers, onEditClick, onFavoriteToggle}) {
     super();
-    this.#data = data;
+    this.#data = {point, destinations, offers};
     this.#handleEditClick = onEditClick;
     this.#handleToggleFavorite = onFavoriteToggle;
 

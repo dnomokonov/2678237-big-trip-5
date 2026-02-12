@@ -3,7 +3,7 @@ import {byChecked} from '@utils/common';
 
 function createDestinationTemplate(destinations) {
   return destinations
-    .map((d) => `<option value="${d.name}"></option>`)
+    .map((d) => `<option value="${d.name}" data-id="${d.id}"></option>`)
     .join('');
 }
 
@@ -118,9 +118,11 @@ function createDescriptionTemplate(currentDestination, id) {
   `;
 }
 
-export function createFormTemplate(data) {
-  const { point = {}, destinations = [], offers: allOffers = [] } = data;
-
+export function createFormTemplate({
+  point = {},
+  destinations = [],
+  offers: allOffers = [] }
+) {
   const {
     id = null,
     basePrice = 0,

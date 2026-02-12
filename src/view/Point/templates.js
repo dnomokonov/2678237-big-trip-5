@@ -18,8 +18,7 @@ export function createOfferTemplate(offers) {
   }).join('');
 }
 
-export function createEventTemplate(data) {
-  const {point, destinations, offers} = data;
+export function createEventTemplate({point, destinations, offers}) {
   const isActive = (point.isFavorite) ? 'event__favorite-btn--active' : '';
 
   const offersForType = offers.find((o) => o.type === point.type)?.offers || [];
