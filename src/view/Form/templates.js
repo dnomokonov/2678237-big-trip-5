@@ -90,7 +90,7 @@ function createButtonsTemplate(id) {
     '<button class="event__reset-btn" type="reset">Cancel</button>';
 }
 
-function createDescriptionTemplate(currentDestination, id) {
+function createDescriptionTemplate(currentDestination) {
   const description = (currentDestination.description || '').trim();
   const pictures = currentDestination.pictures || [];
 
@@ -107,7 +107,7 @@ function createDescriptionTemplate(currentDestination, id) {
         </p>
       ` : ''}
 
-      ${pictures.length > 0 && !id ? `
+      ${pictures.length ? `
         <div class="event__photos-container">
           <div class="event__photos-tape">
             ${createPictureTemplate(pictures)}
@@ -229,7 +229,7 @@ export function createFormTemplate({
       <section class="event__details">
         ${createOffersSection(preparedOffers)}
 
-        ${createDescriptionTemplate(currentDestination, id)}
+        ${createDescriptionTemplate(currentDestination)}
       </section>
     </form>
   `;
