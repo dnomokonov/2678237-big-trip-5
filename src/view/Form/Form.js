@@ -105,8 +105,7 @@ export default class Form extends AbstractStatefulView {
     const selectedDestination = this.#destinations.find((destination) => destination.name === selectedDestinationName);
 
     if (!selectedDestination) {
-      evt.target.style.outline = '2px solid red';
-      evt.target.style.borderRadius = '4px';
+      evt.target.classList.add('event__input--error');
       this.element.querySelector('.event__save-btn').disabled = true;
       return;
     }
