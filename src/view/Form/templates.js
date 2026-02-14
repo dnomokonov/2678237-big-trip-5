@@ -3,7 +3,7 @@ import {byChecked} from '@utils/common';
 
 function createDestinationTemplate(destinations) {
   return destinations
-    .map((d) => `<option value="${d.name}"></option>`)
+    .map((d) => `<option value="${d.name}" data-id="${d.id}"></option>`)
     .join('');
 }
 
@@ -90,7 +90,7 @@ function createButtonsTemplate(id) {
     '<button class="event__reset-btn" type="reset">Cancel</button>';
 }
 
-function createDescriptionTemplate(currentDestination, id) {
+function createDescriptionTemplate(currentDestination) {
   const description = (currentDestination.description || '').trim();
   const pictures = currentDestination.pictures || [];
 
@@ -107,7 +107,7 @@ function createDescriptionTemplate(currentDestination, id) {
         </p>
       ` : ''}
 
-      ${pictures.length > 0 && !id ? `
+      ${pictures.length ? `
         <div class="event__photos-container">
           <div class="event__photos-tape">
             ${createPictureTemplate(pictures)}
@@ -118,9 +118,11 @@ function createDescriptionTemplate(currentDestination, id) {
   `;
 }
 
-export function createFormTemplate(data) {
-  const { point = {}, destinations = [], offers: allOffers = [] } = data;
-
+export function createFormTemplate({
+  point = {},
+  destinations = [],
+  offers: allOffers = [] }
+) {
   const {
     id = null,
     basePrice = 0,
@@ -227,7 +229,7 @@ export function createFormTemplate(data) {
       <section class="event__details">
         ${createOffersSection(preparedOffers)}
 
-        ${createDescriptionTemplate(currentDestination, id)}
+        ${createDescriptionTemplate(currentDestination)}
       </section>
     </form>
   `;

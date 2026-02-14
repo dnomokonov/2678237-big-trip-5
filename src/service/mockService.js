@@ -28,7 +28,10 @@ export default class MockService {
   }
 
   #generateDestinations() {
-    return Array.from({length: getRandom(1, CITIES.length)}, generateDestination);
+    const shuffled = [...CITIES].sort(() => Math.random() - 0.5);
+    const count = getRandom(1, CITIES.length);
+
+    return shuffled.slice(0, count).map((city) => generateDestination(city));
   }
 
   #generateOffers() {
