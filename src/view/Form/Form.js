@@ -2,7 +2,7 @@ import {createFormTemplate} from './templates';
 import AbstractStatefulView from '@framework/view/abstract-stateful-view';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-import {FORM_DATEPICKER} from '@utils/dateUtils';
+import {FLATPICKR_DATE_FORMAT} from '@utils/dateUtils';
 
 export default class Form extends AbstractStatefulView {
   #destinations = null;
@@ -64,7 +64,7 @@ export default class Form extends AbstractStatefulView {
     this.#datepickerFrom = flatpickr(
       dateFromInput,
       {
-        dateFormat: FORM_DATEPICKER,
+        dateFormat: FLATPICKR_DATE_FORMAT,
         enableTime: true,
         defaultDate: this._state.dateFrom,
         onChange: this.#handleDateFromChange
@@ -74,7 +74,7 @@ export default class Form extends AbstractStatefulView {
     this.#datepickerTo = flatpickr(
       dateToInput,
       {
-        dateFormat: FORM_DATEPICKER,
+        dateFormat: FLATPICKR_DATE_FORMAT,
         enableTime: true,
         defaultDate: this._state.dateTo,
         minDate: this._state.dateFrom,
