@@ -5,6 +5,7 @@ const VISIBLE_TIME = 'HH:mm';
 const VISIBLE_SHORT_DATE = 'MMM D';
 const MACHINE_DATE = 'YYYY-MM-DD';
 const MACHINE_DATETIME = 'YYYY-MM-DDTHH:mm';
+const FLATPICKR_DATE_FORMAT = 'd/m/y H:i';
 
 function formatForInput(date) {
   return dayjs(date).format(FORM_INPUT_FULL);
@@ -57,5 +58,6 @@ export {
   formatVisibleShortDate,
   formatMachineDate,
   formatMachineDateTime,
-  formatDuration
+  formatDuration,
+  FLATPICKR_DATE_FORMAT
 };
