@@ -1,6 +1,4 @@
-import {SortType} from '@/const';
-
-function createSortItemsTemplate(sorts) {
+function createSortItemsTemplate(sorts, currentSortType) {
   return sorts.map((item) => `
     <div class="trip-sort__item  trip-sort__item--${item.type}">
       <input
@@ -9,7 +7,7 @@ function createSortItemsTemplate(sorts) {
         type="radio" name="trip-sort"
         value="sort-${item.type}"
         data-sort-type="${item.type}"
-        ${item.type === SortType.DAY ? 'checked' : ''}
+        ${item.type === currentSortType ? 'checked' : ''}
         ${item.isDisabled ? 'disabled' : ''}
       >
       <label class="trip-sort__btn" for="sort-${item.type}">${item.type}</label>
@@ -17,10 +15,10 @@ function createSortItemsTemplate(sorts) {
   `).join('');
 }
 
-export function createSortingTemplate(sortItems) {
+export function createSortingTemplate(sortItems, currentSortType) {
   return `
     <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-      ${createSortItemsTemplate(sortItems)}
+      ${createSortItemsTemplate(sortItems, currentSortType)}
     </form>
   `;
 }

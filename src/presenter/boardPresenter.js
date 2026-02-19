@@ -1,10 +1,8 @@
-import {generateFilters} from '@utils/filterUtils';
 import {generateSorts} from '@utils/sortUtils';
-import {render} from '@framework/render';
-import {MessagesBoard, sortByType, SortType} from '@/const';
+import {remove, render} from '@framework/render';
+import {filterByType, FilterType, MessagesBoard, sortByType, SortType, UpdateType, UserAction} from '@/const';
 
 import List from '@view/List/List';
-import Filters from '@view/Filter/Filters';
 import Sort from '@view/Sort/Sort';
 import Message from '@view/Message/Message';
 
@@ -13,62 +11,99 @@ import PresenterState from '@/state/presenterState';
 
 export default class BoardPresenter {
   #pointListComponent = new List();
-  #tripEvents = document.querySelector('.trip-events');
-  #filtersContainer = document.querySelector('.trip-controls__filters');
+  #boardContainer = null;
 
   #pointsModel = null;
   #destinationsModel = null;
   #offersModel = null;
-
-  #points = [];
-  #sourcedPoints = [];
-  #destinations = [];
-  #offers = [];
+  #filterModel = null;
 
   #pointPresenters = new Map();
   #pointManagerState = new PresenterState();
 
+  #messageComponent = null;
+
+  #filterType = FilterType.EVERYTHING;
+
+  #sortComponent = null;
   #currentSortType = SortType.DAY;
 
-  constructor({pointsModel, destinationsModel, offersModel}) {
+  constructor({boardContainer, pointsModel, destinationsModel, offersModel, filterModel}) {
+    this.#boardContainer = boardContainer;
     this.#pointsModel = pointsModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
+    this.#filterModel = filterModel;
+
+    this.#pointsModel.addObserver(this.#handleModeEvent);
+    this.#filterModel.addObserver(this.#handleModeEvent);
   }
 
   init() {
-    this.#points = [...this.#pointsModel.points];
-    this.#sourcedPoints = [...this.#pointsModel.points];
-
-    this.#destinations = [...this.#destinationsModel.get()];
-    this.#offers = [...this.#offersModel.get()];
-
     this.#renderBoard();
   }
+
+  get points() {
+    this.#filterType = this.#filterModel.filter;
+    const points = this.#pointsModel.points;
+    const filteredPoints = filterByType[this.#filterType](points);
+
+    return sortByType[this.#currentSortType](filteredPoints);
+  }
+
+  #handleViewAction = (actionType, updateType, data) => {
+    switch (actionType) {
+      case UserAction.ADD_POINT:
+        this.#pointsModel.addPoint(updateType, data);
+        break;
+      case UserAction.UPDATE_POINT:
+        this.#pointsModel.updatePoint(updateType, data);
+        break;
+      case UserAction.DELETE_POINT:
+        this.#pointsModel.deletePoint(updateType, data);
+        break;
+    }
+  };
+
+  #handleModeEvent = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#pointPresenters.get(updateType.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        this.#clearBoard();
+        this.#renderBoard();
+        break;
+      case UpdateType.MAJOR:
+        this.#clearBoard({resetSortType: true});
+        this.#renderBoard();
+        break;
+    }
+  };
 
   #renderPoint(point) {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#pointListComponent.element,
       stateManager: this.#pointManagerState,
-      onDataChange: this.#handlePointChange,
+      onDataChange: this.#handleViewAction,
     });
     pointPresenter.init({
       point,
-      destinations: this.#destinations,
-      offers: this.#offers,
+      destinations: this.#destinationsModel.destinations,
+      offers: this.#offersModel.offers,
     });
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 
-  #renderPoints() {
-    this.#points.forEach((point) => {
+  #renderPoints(points) {
+    points.forEach((point) => {
       this.#renderPoint(point);
     });
   }
 
-  #renderPointList() {
-    render(this.#pointListComponent, this.#tripEvents);
-    this.#renderPoints();
+  #renderPointList(points) {
+    render(this.#pointListComponent, this.#boardContainer);
+    this.#renderPoints(points);
   }
 
   #clearPointList() {
@@ -76,17 +111,15 @@ export default class BoardPresenter {
     this.#pointPresenters.clear();
   }
 
-  #renderFilters() {
-    const filters = generateFilters(this.#points);
-    render(new Filters(filters), this.#filtersContainer);
-  }
-
   #renderSort() {
     const sorts = generateSorts();
-    render(new Sort({
+    this.#sortComponent = new Sort({
       sorts,
+      currentSortType: this.#currentSortType,
       onChangeSortType: this.#handleSortTypeChange
-    }), this.#tripEvents);
+    });
+
+    render(this.#sortComponent, this.#boardContainer);
   }
 
   #handleSortTypeChange = (typeSort) => {
@@ -94,32 +127,36 @@ export default class BoardPresenter {
       return;
     }
 
-    this.#points = sortByType[typeSort](this.#sourcedPoints);
     this.#currentSortType = typeSort;
 
-    this.#clearPointList();
-    this.#renderPointList();
+    this.#clearBoard();
+    this.#renderBoard();
   };
 
-  #renderBoard() {
-    this.#renderFilters();
+  #clearBoard({resetSortType = false} = {}) {
+    this.#clearPointList();
 
-    if (this.#points.length === 0) {
-      render(new Message({message: MessagesBoard.EVERYTHING}), this.#tripEvents);
+    remove(this.#sortComponent);
+
+    if (this.#messageComponent) {
+      remove(this.#messageComponent);
+    }
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.DAY;
+    }
+  }
+
+  #renderBoard() {
+    const points = this.points;
+
+    if (points.length === 0) {
+      this.#messageComponent = new Message({message: MessagesBoard[this.#filterType]});
+      render(this.#messageComponent, this.#boardContainer);
       return;
     }
 
     this.#renderSort();
-    this.#renderPointList();
+    this.#renderPointList(points);
   }
-
-  #handlePointChange = (updatedPoint) => {
-    this.#pointsModel.updatePoint(updatedPoint);
-    this.#points = [...this.#pointsModel.points];
-    this.#pointPresenters.get(updatedPoint.id).init({
-      point: updatedPoint,
-      destinations: this.#destinations,
-      offers: this.#offers,
-    });
-  };
 }

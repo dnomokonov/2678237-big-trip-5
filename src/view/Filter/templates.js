@@ -1,6 +1,4 @@
-import {FilterType} from '@/const';
-
-function createTripFilterTemplate(filters) {
+function createTripFilterTemplate(filters, currentFilterType) {
   return filters.map((filter) => `
     <div class="trip-filters__filter">
         <input
@@ -9,7 +7,8 @@ function createTripFilterTemplate(filters) {
             type="radio"
             name="trip-filter"
             value="${filter.type}"
-            ${filter.type === FilterType.EVERYTHING ? 'checked' : ''}
+            data-filter-type="${filter.type}"
+            ${filter.type === currentFilterType ? 'checked' : ''}
             ${filter.count === 0 ? 'disabled' : ''}
         >
         <label class="trip-filters__filter-label" for="filter-${filter.type}">${filter.type}</label>
@@ -17,10 +16,10 @@ function createTripFilterTemplate(filters) {
   `).join('');
 }
 
-export function createFiltersTemplate(filters) {
+export function createFiltersTemplate(filters, currentFilterType) {
   return `
     <form class="trip-filters" action="#" method="get">
-      ${createTripFilterTemplate(filters)}
+      ${createTripFilterTemplate(filters, currentFilterType)}
       <button class="visually-hidden" type="submit">Accept filter</button>
     </form>
   `;

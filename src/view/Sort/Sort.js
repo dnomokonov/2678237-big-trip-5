@@ -2,18 +2,20 @@ import AbstractView from '@framework/view/abstract-view';
 import {createSortingTemplate} from './templates';
 
 export default class Sort extends AbstractView {
-  #sorts = null;
+  #sorts = [];
+  #currentSortType = null;
   #handleSortTypeChange = null;
 
-  constructor({sorts, onChangeSortType}) {
+  constructor({sorts, currentSortType, onChangeSortType}) {
     super();
     this.#sorts = sorts;
+    this.#currentSortType = currentSortType;
     this.#handleSortTypeChange = onChangeSortType;
     this.element.addEventListener('click', this.#handleSortType);
   }
 
   get template() {
-    return createSortingTemplate(this.#sorts);
+    return createSortingTemplate(this.#sorts, this.#currentSortType);
   }
 
   #handleSortType = (evt) => {
