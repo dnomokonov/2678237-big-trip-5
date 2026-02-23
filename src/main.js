@@ -8,6 +8,7 @@ import FilterPresenter from '@presenter/filterPresenter';
 
 const boardContainer = document.querySelector('.trip-events');
 const filterContainer = document.querySelector('.trip-controls__filters');
+const pointAddButton = document.querySelector('.trip-main__event-add-btn');
 
 const service = new MockService();
 const destinationsModel = new DestinationsModel(service);
@@ -15,16 +16,31 @@ const offersModel = new OffersModel(service);
 const pointsModel = new PointsModel(service);
 const filterModel = new FilterModel();
 
-new FilterPresenter({
+const filterPresenter = new FilterPresenter({
   filterContainer,
   filterModel,
   pointsModel,
-}).init();
+});
 
-new BoardPresenter({
+const boardPresenter = new BoardPresenter({
   boardContainer,
   destinationsModel,
   offersModel,
   pointsModel,
   filterModel,
-}).init();
+  onNewPointDestroy: handleCloseNewPoint
+});
+
+function handleCreateNewPoint() {
+  boardPresenter.createNewPoint();
+  pointAddButton.disabled = true;
+}
+
+function handleCloseNewPoint() {
+  pointAddButton.disabled = false;
+}
+
+pointAddButton.addEventListener('click', handleCreateNewPoint);
+
+filterPresenter.init();
+boardPresenter.init();

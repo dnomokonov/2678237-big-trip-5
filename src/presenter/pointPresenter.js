@@ -4,6 +4,7 @@ import ItemList from '@view/itemList/ItemList';
 
 import {remove, render, replace} from '@framework/render';
 import {appendElement} from '@utils/common';
+import {UpdateType, UserAction} from '@/const';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -20,38 +21,39 @@ export default class PointPresenter {
   #itemListComponent = new ItemList();
 
   #point = null;
-  #destinations = null;
-  #offers = null;
+  #destinationsModel = null;
+  #offersModel = null;
   #mode = Mode.DEFAULT;
 
-  constructor({pointListContainer, stateManager, onDataChange}) {
+  constructor({pointListContainer, destinationsModel, offersModel, stateManager, onDataChange}) {
     this.#pointListContainer = pointListContainer;
+    this.#destinationsModel = destinationsModel;
+    this.#offersModel = offersModel;
     this.#stateManager = stateManager;
     this.#handleDataChange = onDataChange;
   }
 
-  init({point, destinations, offers}) {
+  init(point) {
     this.#point = point;
-    this.#destinations = destinations;
-    this.#offers = offers;
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
 
     this.#pointComponent = new Point({
       point: this.#point,
-      destinations: this.#destinations,
-      offers: this.#offers,
+      destinations: this.#destinationsModel.destinations,
+      offers: this.#offersModel.offers,
       onEditClick: this.#handleEditClick,
       onFavoriteToggle: this.#handleToggleFavorite,
     });
 
     this.#pointEditComponent = new Form({
       point: this.#point,
-      destinations: this.#destinations,
-      offers: this.#offers,
-      onCloseClick: this.#handleCloseForm ,
+      destinations: this.#destinationsModel.destinations,
+      offers: this.#offersModel.offers,
       onSubmitForm: this.#handleSubmitForm,
+      onDelete: this.#handleDeletePoint,
+      onCloseForm: this.#handleCloseForm,
     });
 
     appendElement(this.#itemListComponent, this.#pointComponent);
@@ -115,11 +117,28 @@ export default class PointPresenter {
     this.#stateManager.closePresenter();
   };
 
-  #handleSubmitForm = () => {
+  #handleSubmitForm = (point) => {
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
+      point
+    );
     this.#handleCloseForm();
   };
 
+  #handleDeletePoint = (pointId) => {
+    this.#handleDataChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      pointId
+    );
+  };
+
   #handleToggleFavorite = () => {
-    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
+      {...this.#point, isFavorite: !this.#point.isFavorite}
+    );
   };
 }

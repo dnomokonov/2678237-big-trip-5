@@ -8,10 +8,14 @@ import Message from '@view/Message/Message';
 
 import PointPresenter from '@presenter/pointPresenter';
 import PresenterState from '@/state/presenterState';
+import NewPointPresenter from '@presenter/newPointPresenter';
 
 export default class BoardPresenter {
-  #pointListComponent = new List();
   #boardContainer = null;
+  #pointListComponent = new List();
+  #messageComponent = null;
+  #sortComponent = null;
+  #newAddPointPresenter = null;
 
   #pointsModel = null;
   #destinationsModel = null;
@@ -21,19 +25,24 @@ export default class BoardPresenter {
   #pointPresenters = new Map();
   #pointManagerState = new PresenterState();
 
-  #messageComponent = null;
-
   #filterType = FilterType.EVERYTHING;
-
-  #sortComponent = null;
   #currentSortType = SortType.DAY;
 
-  constructor({boardContainer, pointsModel, destinationsModel, offersModel, filterModel}) {
+  constructor({boardContainer, pointsModel, destinationsModel, offersModel, filterModel, onNewPointDestroy}) {
     this.#boardContainer = boardContainer;
     this.#pointsModel = pointsModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
     this.#filterModel = filterModel;
+
+    this.#newAddPointPresenter = new NewPointPresenter({
+      pointListContainer: this.#pointListComponent.element,
+      destinationsModel: this.#destinationsModel,
+      offersModel: this.#offersModel,
+      stateManager: this.#pointManagerState,
+      onDataChange: this.#handleViewAction,
+      onDestroy: onNewPointDestroy
+    });
 
     this.#pointsModel.addObserver(this.#handleModeEvent);
     this.#filterModel.addObserver(this.#handleModeEvent);
@@ -49,6 +58,11 @@ export default class BoardPresenter {
     const filteredPoints = filterByType[this.#filterType](points);
 
     return sortByType[this.#currentSortType](filteredPoints);
+  }
+
+  createNewPoint() {
+    this.#newAddPointPresenter.init();
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
   }
 
   #handleViewAction = (actionType, updateType, data) => {
@@ -68,7 +82,7 @@ export default class BoardPresenter {
   #handleModeEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#pointPresenters.get(updateType.id).init(data);
+        this.#pointPresenters.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
         this.#clearBoard();
@@ -84,14 +98,12 @@ export default class BoardPresenter {
   #renderPoint(point) {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#pointListComponent.element,
+      destinationsModel: this.#destinationsModel,
+      offersModel: this.#offersModel,
       stateManager: this.#pointManagerState,
       onDataChange: this.#handleViewAction,
     });
-    pointPresenter.init({
-      point,
-      destinations: this.#destinationsModel.destinations,
-      offers: this.#offersModel.offers,
-    });
+    pointPresenter.init(point);
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 
@@ -151,7 +163,8 @@ export default class BoardPresenter {
     const points = this.points;
 
     if (points.length === 0) {
-      this.#messageComponent = new Message({message: MessagesBoard[this.#filterType]});
+      const currentFilterKey = this.#filterType.toUpperCase();
+      this.#messageComponent = new Message({message: MessagesBoard[currentFilterKey]});
       render(this.#messageComponent, this.#boardContainer);
       return;
     }

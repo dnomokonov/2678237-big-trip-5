@@ -55,4 +55,11 @@ const UpdateType = {
   MAJOR: 'MAJOR',
 };
 
-export {MessagesBoard, FilterType, filterByType, SortType, sortByType, UserAction, UpdateType};
+const BLANK_POINT = {
+  destination: null,
+  basePrice: 0,
+  offers: [],
+  isFavorite: false,
+};
+
+export {MessagesBoard, FilterType, filterByType, SortType, sortByType, UserAction, UpdateType, BLANK_POINT};

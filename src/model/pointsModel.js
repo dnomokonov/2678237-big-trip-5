@@ -31,11 +31,11 @@ export default class PointsModel extends Observable {
     this._notify(updateType, update);
   }
 
-  deletePoint(updateType, point) {
-    const index = this.#points.findIndex((p) => p.id === point.id);
+  deletePoint(updateType, pointId) {
+    const index = this.#points.findIndex((p) => p.id === pointId);
 
     if (index === -1) {
-      throw new Error(`Could not delete point for ${point.id}`);
+      throw new Error(`Could not delete point for ${pointId}`);
     }
 
     this.#points = [
@@ -43,6 +43,6 @@ export default class PointsModel extends Observable {
       ...this.#points.slice(index + 1),
     ];
 
-    this._notify(updateType, point);
+    this._notify(updateType, pointId);
   }
 }

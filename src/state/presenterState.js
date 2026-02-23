@@ -3,7 +3,11 @@ export default class PresenterState {
 
   openPresenter(presenter) {
     if (this.#currentPresenter && this.#currentPresenter !== presenter) {
-      this.#currentPresenter.resetToView();
+      if (!this.#currentPresenter.resetToView) {
+        this.#currentPresenter.destroy();
+      } else {
+        this.#currentPresenter.resetToView();
+      }
     }
     this.#currentPresenter = presenter;
   }

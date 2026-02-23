@@ -20,6 +20,7 @@ function createOfferTemplate(offers) {
           id="event-offer-${offer.id}"
           type="checkbox"
           name="event-offer-${offer.id}"
+          data-id="${offer.id}"
           ${offer.checked ? 'checked' : ''}
         >
         <label class="event__offer-label" for="event-offer-${offer.id}">
@@ -130,7 +131,7 @@ export function createFormTemplate({
     dateTo = null,
     destination: destId = null,
     offers: selectedOfferIds = [],
-    type = 'flight',
+    type = null,
   } = point;
 
   const currentDestination = destinations.find((d) => d.id === destId) || {
