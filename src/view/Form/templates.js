@@ -1,5 +1,6 @@
 import {formatForInput} from '@utils/dateUtils';
 import {byChecked} from '@utils/common';
+import he from 'he';
 
 function createDestinationTemplate(destinations) {
   return destinations
@@ -175,7 +176,7 @@ export function createFormTemplate({
             id="event-destination-1"
             type="text"
             name="event-destination"
-            value="${currentDestination.name || ''}"
+            value="${he.encode(currentDestination.name || '')}"
             list="destination-list-1"
             placeholder="Select destination"
             required
@@ -217,7 +218,7 @@ export function createFormTemplate({
             id="event-price-1"
             type="number"
             name="event-price"
-            value="${basePrice}"
+            value="${he.encode(String(basePrice))}"
             min="0"
             required
           >

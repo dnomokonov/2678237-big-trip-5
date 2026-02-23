@@ -162,7 +162,7 @@ export default class Form extends AbstractStatefulView {
 
   #handleCostChange = (evt) => {
     const inputCost = evt.target;
-    const currentCost = inputCost.value;
+    const currentCost = Number(inputCost.value);
 
     if (currentCost < inputCost.min) {
       this.#setErrorState(inputCost);
