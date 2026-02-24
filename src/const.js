@@ -43,4 +43,23 @@ const sortByType = {
   [SortType.OFFERS]: null,
 };
 
-export {MessagesBoard, FilterType, filterByType, SortType, sortByType};
+const UserAction = {
+  ADD_POINT: 'ADD_POINT',
+  UPDATE_POINT: 'UPDATE_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+const BLANK_POINT = {
+  destination: null,
+  basePrice: 0,
+  offers: [],
+  isFavorite: false,
+};
+
+export {MessagesBoard, FilterType, filterByType, SortType, sortByType, UserAction, UpdateType, BLANK_POINT};

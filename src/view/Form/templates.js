@@ -1,5 +1,6 @@
 import {formatForInput} from '@utils/dateUtils';
 import {byChecked} from '@utils/common';
+import he from 'he';
 
 function createDestinationTemplate(destinations) {
   return destinations
@@ -20,6 +21,7 @@ function createOfferTemplate(offers) {
           id="event-offer-${offer.id}"
           type="checkbox"
           name="event-offer-${offer.id}"
+          data-id="${offer.id}"
           ${offer.checked ? 'checked' : ''}
         >
         <label class="event__offer-label" for="event-offer-${offer.id}">
@@ -130,7 +132,7 @@ export function createFormTemplate({
     dateTo = null,
     destination: destId = null,
     offers: selectedOfferIds = [],
-    type = 'flight',
+    type = null,
   } = point;
 
   const currentDestination = destinations.find((d) => d.id === destId) || {
@@ -174,7 +176,7 @@ export function createFormTemplate({
             id="event-destination-1"
             type="text"
             name="event-destination"
-            value="${currentDestination.name || ''}"
+            value="${he.encode(currentDestination.name || '')}"
             list="destination-list-1"
             placeholder="Select destination"
             required
@@ -216,7 +218,7 @@ export function createFormTemplate({
             id="event-price-1"
             type="number"
             name="event-price"
-            value="${basePrice}"
+            value="${he.encode(String(basePrice))}"
             min="0"
             required
           >
