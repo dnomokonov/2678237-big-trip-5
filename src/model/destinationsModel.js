@@ -1,8 +1,25 @@
-export default class DestinationsModel {
+import Observable from '@framework/observable';
+import {UpdateType} from '@/const';
+
+export default class DestinationsModel extends Observable {
+  #service = null;
   #destinations = [];
 
   constructor(service) {
-    this.#destinations = service.getDestinations();
+    super();
+    this.#service = service;
+  }
+
+  async init() {
+    try {
+      const response = await this.#service.destinations;
+      this.#destinations = response;
+      this._notify(UpdateType.INIT, {destinationsLoad: true});
+    } catch (err) {
+      this.#destinations = [];
+      this._notify(UpdateType.ERROR);
+      throw err;
+    }
   }
 
   get destinations() {
