@@ -12,8 +12,7 @@ export default class OffersModel extends Observable {
 
   async init() {
     try {
-      const response = await this.#service.offers;
-      this.#offers = response;
+      this.#offers = await this.#service.offers;
       this._notify(UpdateType.INIT, {offersLoad: true});
     } catch (err) {
       this.#offers = [];

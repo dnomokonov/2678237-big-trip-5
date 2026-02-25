@@ -42,13 +42,14 @@ export default class PointsModel extends Observable {
     try {
       const response = await this.#service.updatePoint(update);
       const updatedPoint = PointDataAdapter.fromApi(response);
-      this.#points = {
+      this.#points = [
         ...this.#points.slice(0, index),
         updatedPoint,
         ...this.#points.slice(index + 1),
-      };
+      ];
       this._notify(updateType, updatedPoint);
     } catch (err) {
+      console.error(err);
       throw new Error(`Could not update points for ${update.id}`);
     }
   }

@@ -19,8 +19,8 @@ export default class PointDataAdapter {
   static toApi(point) {
     return {
       'id': point.id,
-      'base_price': point.base_price,
-      'date_from': point.date_from,
+      'base_price': point.basePrice,
+      'date_from': point.dateFrom,
       'date_to': point.dateTo,
       'destination': point.destination,
       'is_favorite': point.isFavorite,

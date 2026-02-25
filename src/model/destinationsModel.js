@@ -12,8 +12,7 @@ export default class DestinationsModel extends Observable {
 
   async init() {
     try {
-      const response = await this.#service.destinations;
-      this.#destinations = response;
+      this.#destinations = await this.#service.destinations;
       this._notify(UpdateType.INIT, {destinationsLoad: true});
     } catch (err) {
       this.#destinations = [];

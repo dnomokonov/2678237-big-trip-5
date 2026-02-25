@@ -89,7 +89,7 @@ export default class BoardPresenter {
   #handleModeEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#pointPresenters.get(data.id).init();
+        this.#pointPresenters.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
         this.#clearBoard();
