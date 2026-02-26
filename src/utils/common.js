@@ -1,25 +1,10 @@
-function getRandom(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function getRandomItemArray(array) {
-  return array[Math.floor(Math.random() * array.length)];
-}
-
-function appendElement(container, component) {
+export function appendElement(container, component) {
   container.element.appendChild(component.element);
 }
 
-function byChecked(a, b) {
+export function byChecked(a, b) {
   if (a.checked !== b.checked) {
     return Number(b.checked) - Number(a.checked);
   }
   return 0;
 }
-
-export {
-  getRandom,
-  getRandomItemArray,
-  appendElement,
-  byChecked
-};
