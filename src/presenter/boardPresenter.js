@@ -28,6 +28,11 @@ export default class BoardPresenter {
   #filterType = FilterType.EVERYTHING;
   #currentSortType = SortType.DAY;
 
+  #isLoading = true;
+  #isDestinationsLoaded = false;
+  #isOffersLoaded = false;
+  #isPointsLoaded = false;
+
   constructor({boardContainer, pointsModel, destinationsModel, offersModel, filterModel, onNewPointDestroy}) {
     this.#boardContainer = boardContainer;
     this.#pointsModel = pointsModel;
@@ -45,6 +50,8 @@ export default class BoardPresenter {
     });
 
     this.#pointsModel.addObserver(this.#handleModeEvent);
+    this.#destinationsModel.addObserver(this.#handleModeEvent);
+    this.#offersModel.addObserver(this.#handleModeEvent);
     this.#filterModel.addObserver(this.#handleModeEvent);
   }
 
@@ -92,7 +99,39 @@ export default class BoardPresenter {
         this.#clearBoard({resetSortType: true});
         this.#renderBoard();
         break;
+      case UpdateType.INIT:
+        if (data?.destinationsLoad) {
+          this.#isDestinationsLoaded = true;
+        }
+        if (data?.offersLoad) {
+          this.#isOffersLoaded = true;
+        }
+        if (data?.pointsLoad) {
+          this.#isPointsLoaded = true;
+        }
+
+        if (!this.#isDestinationsLoaded || !this.#isOffersLoaded || !this.#isPointsLoaded) {
+          return;
+        }
+
+        this.#isLoading = false;
+        remove(this.#messageComponent);
+        this.#renderBoard();
+        break;
+      case UpdateType.ERROR:
+        this.#isLoading = false;
+        this.#renderMessage(MessagesBoard.FAILED);
+        break;
     }
+  };
+
+  #renderMessage = (message) => {
+    if (this.#messageComponent) {
+      remove(this.#messageComponent);
+    }
+
+    this.#messageComponent = new Message({message});
+    render(this.#messageComponent, this.#boardContainer);
   };
 
   #renderPoint(point) {
@@ -162,10 +201,14 @@ export default class BoardPresenter {
   #renderBoard() {
     const points = this.points;
 
+    if (this.#isLoading) {
+      this.#renderMessage(MessagesBoard.LOADING);
+      return;
+    }
+
     if (points.length === 0) {
       const currentFilterKey = this.#filterType.toUpperCase();
-      this.#messageComponent = new Message({message: MessagesBoard[currentFilterKey]});
-      render(this.#messageComponent, this.#boardContainer);
+      this.#renderMessage(MessagesBoard[currentFilterKey]);
       return;
     }
 

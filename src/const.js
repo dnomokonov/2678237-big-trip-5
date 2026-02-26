@@ -10,6 +10,7 @@ const MessagesBoard = {
   PAST: 'There are no past events now',
   PRESENT: 'There are no present events now',
   FUTURE: 'There are no future events now',
+  LOADING: 'Loading...',
   FAILED: 'Failed to load latest route information',
 };
 
@@ -53,6 +54,8 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
+  ERROR: 'ERROR',
 };
 
 const BLANK_POINT = {

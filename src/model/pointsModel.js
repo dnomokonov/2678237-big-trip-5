@@ -1,13 +1,26 @@
 import Observable from '@framework/observable';
+import PointDataAdapter from '@/adapter/pointDataAdapter';
+import {UpdateType} from '@/const';
 
 export default class PointsModel extends Observable {
-  #points = [];
   #service = null;
+  #points = [];
 
   constructor(service) {
     super();
     this.#service = service;
-    this.#points = service.getPoints();
+  }
+
+  async init() {
+    try {
+      const points = await this.#service.points;
+      this.#points = PointDataAdapter.listFromApi(points);
+      this._notify(UpdateType.INIT, {pointsLoad: true});
+    } catch (err) {
+      this.#points = [];
+      this._notify(UpdateType.ERROR);
+      throw err;
+    }
   }
 
   get points() {
@@ -19,16 +32,25 @@ export default class PointsModel extends Observable {
     this._notify(updateType, newPoint);
   }
 
-  updatePoint(updateType, update) {
+  async updatePoint(updateType, update) {
     const index = this.#points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
       throw new Error(`Could not update points for ${update.id}`);
     }
 
-    this.#points[index] = update;
-
-    this._notify(updateType, update);
+    try {
+      const response = await this.#service.updatePoint(update);
+      const updatedPoint = PointDataAdapter.fromApi(response);
+      this.#points = [
+        ...this.#points.slice(0, index),
+        updatedPoint,
+        ...this.#points.slice(index + 1),
+      ];
+      this._notify(updateType, updatedPoint);
+    } catch (err) {
+      throw new Error(`Could not update points for ${update.id}`);
+    }
   }
 
   deletePoint(updateType, pointId) {
