@@ -5,6 +5,7 @@ const VISIBLE_TIME = 'HH:mm';
 const VISIBLE_SHORT_DATE = 'MMM D';
 const MACHINE_DATE = 'YYYY-MM-DD';
 const MACHINE_DATETIME = 'YYYY-MM-DDTHH:mm';
+const INFO_DATE_FORMAT = 'D MMM';
 const FLATPICKR_DATE_FORMAT = 'd/m/y H:i';
 
 function formatForInput(date) {
@@ -52,6 +53,16 @@ function formatDuration(start, end) {
   return `${dStr}D ${hStr}H ${mStr}M`;
 }
 
+function formatInfoDate(start, end) {
+  const equalDate = dayjs(start).isSame(dayjs(end), 'month');
+  const firstDateFormat = equalDate ? 'D' : INFO_DATE_FORMAT;
+
+  const dayStart = dayjs(start).format(firstDateFormat);
+  const dayEnd = dayjs(end).format(INFO_DATE_FORMAT);
+
+  return `${dayStart} &nbsp;&mdash;&nbsp; ${dayEnd}`;
+}
+
 export {
   formatForInput,
   formatVisibleTime,
@@ -59,5 +70,6 @@ export {
   formatMachineDate,
   formatMachineDateTime,
   formatDuration,
+  formatInfoDate,
   FLATPICKR_DATE_FORMAT
 };
