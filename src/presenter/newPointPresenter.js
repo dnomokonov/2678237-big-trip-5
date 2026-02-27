@@ -3,7 +3,6 @@ import ItemList from '@view/itemList/ItemList';
 import {appendElement} from '@utils/common';
 import {remove, render, RenderPosition} from '@framework/render';
 import {BLANK_POINT, UpdateType, UserAction} from '@/const';
-import { v4 as uuidv4 } from 'uuid';
 
 export default class NewPointPresenter {
   #pointListContainer = null;
@@ -50,6 +49,25 @@ export default class NewPointPresenter {
     document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 
+  setSaving() {
+    this.#pointEditComponent.updateElement({
+      isSaving: true,
+      isDisabled: true,
+    });
+  }
+
+  setAborting() {
+    const resetForm = () => {
+      this.#pointEditComponent.updateElement({
+        isSaving: false,
+        isDeleting: false,
+        isDisabled: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetForm);
+  }
+
   destroy() {
     if (this.#pointEditComponent === null) {
       return;
@@ -69,9 +87,8 @@ export default class NewPointPresenter {
     this.#handleDataChange(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      {id: uuidv4(), ...point}
+      point
     );
-    this.destroy();
   };
 
   #handleCloseClick = () => {

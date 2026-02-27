@@ -27,9 +27,15 @@ export default class PointsModel extends Observable {
     return this.#points;
   }
 
-  addPoint(updateType, newPoint) {
-    this.#points.push(newPoint);
-    this._notify(updateType, newPoint);
+  async addPoint(updateType, point) {
+    try {
+      const response = await this.#service.createPoint(point);
+      const newPoint = PointDataAdapter.fromApi(response);
+      this.#points.push(newPoint);
+      this._notify(updateType, newPoint);
+    } catch (err) {
+      throw new Error('Error adding point');
+    }
   }
 
   async updatePoint(updateType, update) {
@@ -53,18 +59,22 @@ export default class PointsModel extends Observable {
     }
   }
 
-  deletePoint(updateType, pointId) {
+  async deletePoint(updateType, pointId) {
     const index = this.#points.findIndex((p) => p.id === pointId);
 
     if (index === -1) {
       throw new Error(`Could not delete point for ${pointId}`);
     }
 
-    this.#points = [
-      ...this.#points.slice(0, index),
-      ...this.#points.slice(index + 1),
-    ];
-
-    this._notify(updateType, pointId);
+    try {
+      await this.#service.deletePoint(pointId);
+      this.#points = [
+        ...this.#points.slice(0, index),
+        ...this.#points.slice(index + 1),
+      ];
+      this._notify(updateType);
+    } catch (err) {
+      throw new Error(`Could not delete point for ${pointId}`);
+    }
   }
 }

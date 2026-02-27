@@ -65,4 +65,9 @@ const BLANK_POINT = {
   isFavorite: false,
 };
 
-export {MessagesBoard, FilterType, filterByType, SortType, sortByType, UserAction, UpdateType, BLANK_POINT};
+const TIME_LIMIT = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
+export {MessagesBoard, FilterType, filterByType, SortType, sortByType, UserAction, UpdateType, BLANK_POINT, TIME_LIMIT};

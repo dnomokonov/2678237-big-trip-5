@@ -82,12 +82,14 @@ function createTypeItemsTemplate(allOffers, type) {
   }).join('');
 }
 
-function createButtonsTemplate(id) {
+function createButtonsTemplate(id, isDeleting, isDisabled) {
   return id ?
-    `<button class="event__reset-btn" type="reset">Delete</button>
-      <button class="event__rollup-btn" type="button">
+    `<button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>
+        ${isDeleting ? 'Deleting...' : 'Delete'}
+     </button>
+     <button class="event__rollup-btn" type="button">
       <span class="visually-hidden">Open event</span>
-    </button>`
+     </button>`
     :
     '<button class="event__reset-btn" type="reset">Cancel</button>';
 }
@@ -133,6 +135,9 @@ export function createFormTemplate({
     destination: destId = null,
     offers: selectedOfferIds = [],
     type = null,
+    isSaving,
+    isDeleting,
+    isDisabled,
   } = point;
 
   const currentDestination = destinations.find((d) => d.id === destId) || {
@@ -224,8 +229,10 @@ export function createFormTemplate({
           >
         </div>
 
-        <button class="event__save-btn btn btn--blue" type="submit">Save</button>
-        ${createButtonsTemplate(id)}
+        <button class="event__save-btn btn btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>
+            ${isSaving ? 'Saving...' : 'Save'}
+        </button>
+        ${createButtonsTemplate(id, isDeleting, isDisabled)}
       </header>
 
       <section class="event__details">
