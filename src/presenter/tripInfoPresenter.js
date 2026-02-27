@@ -57,16 +57,18 @@ export default class TripInfoPresenter {
   }
 
   init() {
+    const prevTripInfoComponent = this.#tripInfoComponent;
     const {title, dates, cost} = this.info;
 
     if (!title || !dates || !cost) {
+      remove(this.#tripInfoComponent);
+      this.#tripInfoComponent = null;
       return;
     }
 
-    const prevTripInfoComponent = this.#tripInfoComponent;
     this.#tripInfoComponent = new TripInfo({title, dates, cost});
 
-    if (prevTripInfoComponent === null) {
+    if (!prevTripInfoComponent) {
       render(this.#tripInfoComponent, this.#container, RenderPosition.AFTERBEGIN);
       return;
     }

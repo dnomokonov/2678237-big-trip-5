@@ -54,10 +54,7 @@ function formatDuration(start, end) {
 }
 
 function formatInfoDate(start, end) {
-  const equalDate = dayjs(start).isSame(dayjs(end), 'month');
-  const firstDateFormat = equalDate ? 'D' : INFO_DATE_FORMAT;
-
-  const dayStart = dayjs(start).format(firstDateFormat);
+  const dayStart = dayjs(start).format(INFO_DATE_FORMAT);
   const dayEnd = dayjs(end).format(INFO_DATE_FORMAT);
 
   return `${dayStart} &nbsp;&mdash;&nbsp; ${dayEnd}`;
