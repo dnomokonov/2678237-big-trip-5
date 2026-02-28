@@ -1,7 +1,7 @@
 import TripInfo from '@view/TripInfo/TripInfo';
 import {remove, render, RenderPosition, replace} from '@framework/render';
 import {isSortByDay} from '@utils/sortUtils';
-import {formatInfoDate} from '@utils/dateUtils';
+import {formatInfoDate, formatRouteString} from '@utils/infoUtils';
 
 export default class TripInfoPresenter {
   #container = null;
@@ -42,12 +42,7 @@ export default class TripInfoPresenter {
       return dest ? dest.name : '';
     });
 
-    let title;
-    if (destinationNames.length > 3) {
-      title = `${destinationNames[0]} &mdash; ... &mdash; ${destinationNames[destinationNames.length - 1]}`;
-    } else {
-      title = destinationNames.join(' &mdash; ');
-    }
+    const title = formatRouteString(destinationNames);
 
     const firstDate = pointsByDay[0].dateFrom;
     const lastDate = pointsByDay[pointsByDay.length - 1].dateTo;
